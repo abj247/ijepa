@@ -42,6 +42,7 @@ from src.utils.logging import (
     AverageMeter)
 from src.utils.tensors import repeat_interleave_batch
 from src.datasets.imagenet1k import make_imagenet1k
+from src.datasets.huggingface_dataset import make_huggingface
 
 from src.helper import (
     load_checkpoint,
@@ -93,8 +94,8 @@ def main(args, resume_preempt=False):
     batch_size = args['data']['batch_size']
     pin_mem = args['data']['pin_mem']
     num_workers = args['data']['num_workers']
-    root_path = args['data']['root_path']
-    image_folder = args['data']['image_folder']
+    root_path = args['data'].get('root_path', None)  # Optional, only for ImageNet
+    image_folder = args['data'].get('image_folder', None)  # Optional, only for ImageNet
     crop_size = args['data']['crop_size']
     crop_scale = args['data']['crop_scale']
     # --
@@ -189,7 +190,13 @@ def main(args, resume_preempt=False):
         color_jitter=color_jitter)
 
     # -- init data-loaders/samplers
-    _, unsupervised_loader, unsupervised_sampler = make_imagenet1k(
+    # Check if we should use HuggingFace dataset or ImageNet
+    dataset_type = args['data'].get('dataset_type', 'imagenet')
+    
+    if dataset_type == 'huggingface':
+        dataset_name = args['data'].get('dataset_name', 'tsbpp/fall2025_deeplearning')
+        logger.info(f'Using HuggingFace dataset: {dataset_name}')
+        _, unsupervised_loader, unsupervised_sampler = make_huggingface(
             transform=transform,
             batch_size=batch_size,
             collator=mask_collator,
@@ -198,10 +205,24 @@ def main(args, resume_preempt=False):
             num_workers=num_workers,
             world_size=world_size,
             rank=rank,
-            root_path=root_path,
-            image_folder=image_folder,
-            copy_data=copy_data,
+            dataset_name=dataset_name,
+            split='train',
             drop_last=True)
+    else:
+        logger.info('Using ImageNet dataset')
+        _, unsupervised_loader, unsupervised_sampler = make_imagenet1k(
+                transform=transform,
+                batch_size=batch_size,
+                collator=mask_collator,
+                pin_mem=pin_mem,
+                training=True,
+                num_workers=num_workers,
+                world_size=world_size,
+                rank=rank,
+                root_path=root_path,
+                image_folder=image_folder,
+                copy_data=copy_data,
+                drop_last=True)
     ipe = len(unsupervised_loader)
 
     # -- init optimizer and scheduler
