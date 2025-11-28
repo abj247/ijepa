@@ -1,0 +1,37 @@
+  File "<string>", line 1
+    import torch; print(torch.cuda.get_device_name(0) if torch.cuda.is_available() else \"None\")
+                                                                                         ^
+SyntaxError: unexpected character after line continuation character
+terminate called without an active exception
+Exception ignored in: <function _MultiProcessingDataLoaderIter.__del__ at 0x1554a0cae320>
+Traceback (most recent call last):
+  File "/gpfs/data/shenlab/aj4718/miniconda3/envs/ijepa/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 1479, in __del__
+    self._shutdown_workers()
+  File "/gpfs/data/shenlab/aj4718/miniconda3/envs/ijepa/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 1443, in _shutdown_workers
+    w.join(timeout=_utils.MP_STATUS_CHECK_INTERVAL)
+  File "/gpfs/data/shenlab/aj4718/miniconda3/envs/ijepa/lib/python3.10/multiprocessing/process.py", line 149, in join
+    res = self._popen.wait(timeout)
+  File "/gpfs/data/shenlab/aj4718/miniconda3/envs/ijepa/lib/python3.10/multiprocessing/popen_fork.py", line 40, in wait
+    if not wait([self.sentinel], timeout):
+  File "/gpfs/data/shenlab/aj4718/miniconda3/envs/ijepa/lib/python3.10/multiprocessing/connection.py", line 931, in wait
+    ready = selector.select(timeout)
+  File "/gpfs/data/shenlab/aj4718/miniconda3/envs/ijepa/lib/python3.10/selectors.py", line 416, in select
+    fd_event_list = self._selector.poll(timeout)
+  File "/gpfs/data/shenlab/aj4718/miniconda3/envs/ijepa/lib/python3.10/site-packages/torch/utils/data/_utils/signal_handling.py", line 66, in handler
+    _error_if_any_worker_fails()
+RuntimeError: DataLoader worker (pid 2120942) is killed by signal: Aborted. 
+Process Process-1:
+Traceback (most recent call last):
+  File "/gpfs/data/shenlab/aj4718/miniconda3/envs/ijepa/lib/python3.10/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/gpfs/data/shenlab/aj4718/miniconda3/envs/ijepa/lib/python3.10/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/gpfs/data/shenlab/aj4718/ijepa/main.py", line 52, in process_main
+    app_main(args=params)
+  File "/gpfs/data/shenlab/aj4718/ijepa/src/train.py", line 393, in main
+    log_stats()
+  File "/gpfs/data/shenlab/aj4718/ijepa/src/train.py", line 369, in log_stats
+    csv_logger.log(epoch + 1, itr, loss, maskA_meter.val, maskB_meter.val, etime)
+  File "/gpfs/data/shenlab/aj4718/ijepa/src/utils/logging.py", line 46, in log
+    with open(self.fname, '+a') as f:
+OSError: [Errno 122] Disk quota exceeded: '/gpfs/data/shenlab/aj4718/ijepa/logs/hf_vits16_bs64_ep300/jepa_r0.csv'

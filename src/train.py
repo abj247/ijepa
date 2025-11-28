@@ -295,6 +295,9 @@ def main(args, resume_preempt=False):
         maskA_meter = AverageMeter()
         maskB_meter = AverageMeter()
         time_meter = AverageMeter()
+        
+        # Log number of batches
+        logger.info(f'Starting epoch {epoch+1} with {len(unsupervised_loader)} iterations')
 
         for itr, (udata, masks_enc, masks_pred) in enumerate(unsupervised_loader):
 

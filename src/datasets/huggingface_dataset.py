@@ -103,7 +103,7 @@ class HuggingFaceDataset(torch.utils.data.Dataset):
         logger.info(f'Loading HuggingFace dataset: {dataset_name}, split: {split}')
         
         # Load the dataset from HuggingFace
-        self.dataset = load_dataset(dataset_name, split=split, trust_remote_code=True)
+        self.dataset = load_dataset(dataset_name, split=split)
         self.transform = transform
         self.dataset_name = dataset_name
         self.split = split
