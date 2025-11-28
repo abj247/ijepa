@@ -1,0 +1,8 @@
+  File "<string>", line 1
+    import torch; print(torch.cuda.get_device_name(0) if torch.cuda.is_available() else \"None\")
+                                                                                         ^
+SyntaxError: unexpected character after line continuation character
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'tsbpp/fall2025_deeplearning' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Could not load library libcudnn_cnn_infer.so.8. Error: libnvrtc.so: cannot open shared object file: No such file or directory

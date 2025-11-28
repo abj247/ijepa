@@ -116,7 +116,8 @@ def init_opt(
     final_wd=1e-6,
     final_lr=0.0,
     use_bfloat16=False,
-    ipe_scale=1.25
+    ipe_scale=1.25,
+    optimizer_name='adamw'  # [NEW]
 ):
     param_groups = [
         {
@@ -138,8 +139,20 @@ def init_opt(
         }
     ]
 
-    logger.info('Using AdamW')
-    optimizer = torch.optim.AdamW(param_groups)
+    if optimizer_name.lower() == 'lars':
+        from src.utils.lars import LARS
+        logger.info('Using LARS')
+        optimizer = LARS(param_groups,
+                         lr=0,  # Learning rate is handled by scheduler
+                         weight_decay=wd,
+                         momentum=0.9,
+                         eta=0.001,
+                         weight_decay_filter=None,
+                         lars_adaptation_filter=None)
+    else:
+        logger.info('Using AdamW')
+        optimizer = torch.optim.AdamW(param_groups)
+
     scheduler = WarmupCosineSchedule(
         optimizer,
         warmup_steps=int(warmup*iterations_per_epoch),
